@@ -58,7 +58,15 @@ public class EstudiosMapperMongo {
 		study.setProfession(profesionMapperMongo.fromAdapterToDomain(estudiosDocument.getPrimaryProfesion()));
 		study.setGraduationDate(validateGraduationDate(estudiosDocument.getFecha()));
 		study.setUniversityName(validateUniversityName(estudiosDocument.getUniver()));
-		return null;
+		return study;
+	}
+	public Study fromAdapterToDomainBasic(EstudiosDocument estudiosDocument) {
+		Study study = new Study();
+		study.setPerson(personaMapperMongo.fromAdapterToDomainBasic(estudiosDocument.getPrimaryPersona()));
+		study.setProfession(profesionMapperMongo.fromAdapterToDomainBasic(estudiosDocument.getPrimaryProfesion()));
+		study.setGraduationDate(validateGraduationDate(estudiosDocument.getFecha()));
+		study.setUniversityName(validateUniversityName(estudiosDocument.getUniver()));
+		return study;
 	}
 
 	private LocalDate validateGraduationDate(LocalDate fecha) {

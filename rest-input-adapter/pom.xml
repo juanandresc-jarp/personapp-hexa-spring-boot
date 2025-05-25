@@ -13,6 +13,17 @@
 	<description>REST API Input Adapter for PersonAPP</description>
 	<dependencies>
 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.36</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.30</version> <!-- o superior -->
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>co.edu.javeriana.as.personapp</groupId>
 			<artifactId>application</artifactId>
 			<version>${revision}</version>
@@ -44,13 +55,15 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${global.springframework.boot.version}</version>
+				<executions>
+					<execution>
+					<goals>
+						<goal>repackage</goal>
+					</goals>
+					</execution>
+				</executions>
 				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
+					<mainClass>co.edu.javeriana.as.personapp.PersonAppRestApi</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -21,6 +21,9 @@ public class EstudiosMapperMaria {
 	private ProfesionMapperMaria profesionMapperMaria;
 
 	public EstudiosEntity fromDomainToAdapter(Study study) {
+		if (study == null) {
+			return null;
+		}
 		EstudiosEntityPK estudioPK = new EstudiosEntityPK();
 		estudioPK.setCcPer(study.getPerson().getIdentification());
 		estudioPK.setIdProf(study.getProfession().getIdentification());
@@ -28,6 +31,8 @@ public class EstudiosMapperMaria {
 		estudio.setEstudiosPK(estudioPK);
 		estudio.setFecha(validateFecha(study.getGraduationDate()));
 		estudio.setUniver(validateUniver(study.getUniversityName()));
+		estudio.setPersona(personaMapperMaria.fromDomainToAdapter(study.getPerson()));
+		estudio.setProfesion(profesionMapperMaria.fromDomainToAdapter(study.getProfession()));
 		return estudio;
 	}
 
@@ -42,17 +47,21 @@ public class EstudiosMapperMaria {
 	}
 
 	public Study fromAdapterToDomain(EstudiosEntity estudiosEntity) {
-		Study study = new Study();
-		study.setPerson(personaMapperMaria.fromAdapterToDomain(estudiosEntity.getPersona()));
-		study.setProfession(profesionMapperMaria.fromAdapterToDomain(estudiosEntity.getProfesion()));
-		study.setGraduationDate(validateGraduationDate(estudiosEntity.getFecha()));
-		study.setUniversityName(validateUniversityName(estudiosEntity.getUniver()));
-		return null;
+		return new Study(
+			personaMapperMaria.fromAdapterToDomainBasic(estudiosEntity.getPersona()),
+			profesionMapperMaria.fromAdapterToDomainBasic(estudiosEntity.getProfesion()),
+			validateGraduationDate(estudiosEntity.getFecha()),
+			validateUniversityName(estudiosEntity.getUniver())
+		);
 	}
 
 	private LocalDate validateGraduationDate(Date fecha) {
+		if (fecha instanceof java.sql.Date) {
+			return ((java.sql.Date) fecha).toLocalDate(); // Directamente convierte a LocalDate
+		}
 		return fecha != null ? fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null;
 	}
+
 
 	private String validateUniversityName(String univer) {
 		return univer != null ? univer : "";

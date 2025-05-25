@@ -1,0 +1,68 @@
+services:
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: "persona_db"
+    volumes:
+      - mongo_data:/data/db
+      - ./scripts/persona_ddl_mongo.js:/docker-entrypoint-initdb.d/ppersona_ddl_mongo.js
+      - ./scripts/persona_dml_mongo.js:/docker-entrypoint-initdb.d/ppersona_dml_mongo.js
+    ports:
+      - 27017:27017
+
+  mariadb:
+    image: mariadb:10.3.10
+    container_name: mariadb
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: persona_db
+      MYSQL_DATABASE: persona_db
+      MYSQL_USER: persona_db
+      MYSQL_PASSWORD: persona_db
+    volumes:
+      - maria_data:/var/lib/mysql
+      - ./scripts/persona_ddl_maria.sql:/docker-entrypoint-initdb.d/ppersona_ddl_maria.sql
+      - ./scripts/persona_dml_maria.sql:/docker-entrypoint-initdb.d/ppersona_dml_maria.sql
+    restart: always
+
+  cli-service:
+    image: cli-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cli-service
+    environment:
+      - MARIADB_HOST=mariadb
+      - MARIADB_PORT=3306
+      - MONGODB_HOST=mongo
+      - MONGODB_PORT=27017
+      - APP_TYPE=/cli/app.jar
+    depends_on:
+      - mariadb
+      - mongo
+
+  rest-service:
+    image: rest-service
+    ports:
+      - "3000:3000"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rest-service
+    environment:
+      - MARIADB_HOST=mariadb
+      - MARIADB_PORT=3306
+      - MONGODB_HOST=mongo
+      - MONGODB_PORT=27017
+      - APP_TYPE=/rest/app.jar
+    depends_on:
+      - mariadb
+      - mongo
+    
+volumes:
+  maria_data:
+  mongo_data:

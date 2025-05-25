@@ -68,6 +68,16 @@ public class PersonaMapperMongo {
 		person.setPhoneNumbers(validatePhones(personaDocument.getTelefonos()));
 		return person;
 	}
+	public Person fromAdapterToDomainBasic(PersonaDocument personaDocument) {
+		Person person = new Person();
+		person.setIdentification(personaDocument.getId());
+		person.setFirstName(personaDocument.getNombre());
+		person.setLastName(personaDocument.getApellido());
+		person.setGender(validateGender(personaDocument.getGenero()));
+		person.setAge(validateAge(personaDocument.getEdad()));
+		return person;
+	}
+
 
 	private @NonNull Gender validateGender(String genero) {
 		return "F".equals(genero) ? Gender.FEMALE : "M".equals(genero) ? Gender.MALE : Gender.OTHER;
@@ -79,7 +89,7 @@ public class PersonaMapperMongo {
 
 	private List<Study> validateStudies(List<EstudiosDocument> estudiosDocuments) {
 		return estudiosDocuments != null && !estudiosDocuments.isEmpty() ? estudiosDocuments.stream()
-				.map(estudio -> estudiosMapperMongo.fromAdapterToDomain(estudio)).collect(Collectors.toList())
+				.map(estudio -> estudiosMapperMongo.fromAdapterToDomainBasic(estudio)).collect(Collectors.toList())
 				: new ArrayList<Study>();
 	}
 

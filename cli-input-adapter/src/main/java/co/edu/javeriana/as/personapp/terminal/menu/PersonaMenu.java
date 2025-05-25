@@ -16,7 +16,10 @@ public class PersonaMenu {
 
 	private static final int OPCION_REGRESAR_MOTOR_PERSISTENCIA = 0;
 	private static final int OPCION_VER_TODO = 1;
-	// mas opciones
+	private static final int OPCION_CREAR = 2;
+	private static final int OPCION_EDITAR = 3;
+	private static final int OPCION_ELIMINAR = 4;
+	private static final int OPCION_BUSCAR = 5;
 
 	public void iniciarMenu(PersonaInputAdapterCli personaInputAdapterCli, Scanner keyboard) {
 		boolean isValid = false;
@@ -25,21 +28,21 @@ public class PersonaMenu {
 				mostrarMenuMotorPersistencia();
 				int opcion = leerOpcion(keyboard);
 				switch (opcion) {
-				case OPCION_REGRESAR_MODULOS:
-					isValid = true;
-					break;
-				case PERSISTENCIA_MARIADB:
-					personaInputAdapterCli.setPersonOutputPortInjection("MARIA");
-					menuOpciones(personaInputAdapterCli,keyboard);
-					break;
-				case PERSISTENCIA_MONGODB:
-					personaInputAdapterCli.setPersonOutputPortInjection("MONGO");
-					menuOpciones(personaInputAdapterCli,keyboard);
-					break;
-				default:
-					log.warn("La opción elegida no es válida.");
+					case OPCION_REGRESAR_MODULOS:
+						isValid = true;
+						break;
+					case PERSISTENCIA_MARIADB:
+						personaInputAdapterCli.setPersonOutputPortInjection("MARIA");
+						menuOpciones(personaInputAdapterCli, keyboard);
+						break;
+					case PERSISTENCIA_MONGODB:
+						personaInputAdapterCli.setPersonOutputPortInjection("MONGO");
+						menuOpciones(personaInputAdapterCli, keyboard);
+						break;
+					default:
+						log.warn("La opción elegida no es válida.");
 				}
-			}  catch (InvalidOptionException e) {
+			} catch (InvalidOptionException e) {
 				log.warn(e.getMessage());
 			}
 		} while (!isValid);
@@ -52,18 +55,30 @@ public class PersonaMenu {
 				mostrarMenuOpciones();
 				int opcion = leerOpcion(keyboard);
 				switch (opcion) {
-				case OPCION_REGRESAR_MOTOR_PERSISTENCIA:
-					isValid = true;
-					break;
-				case OPCION_VER_TODO:
-					personaInputAdapterCli.historial();					
-					break;
-				// mas opciones
-				default:
-					log.warn("La opción elegida no es válida.");
+					case OPCION_REGRESAR_MOTOR_PERSISTENCIA:
+						isValid = true;
+						break;
+					case OPCION_VER_TODO:
+						personaInputAdapterCli.historial();
+						break;
+					case OPCION_CREAR:
+						personaInputAdapterCli.crear();
+						break;
+					case OPCION_EDITAR:
+						personaInputAdapterCli.editar();
+						break;
+					case OPCION_ELIMINAR:
+						personaInputAdapterCli.eliminar();
+						break;
+					case OPCION_BUSCAR:
+						personaInputAdapterCli.buscar();
+						break;
+					default:
+						log.warn("La opción elegida no es válida.");
 				}
 			} catch (InputMismatchException e) {
 				log.warn("Solo se permiten números.");
+				keyboard.nextLine(); // limpiar buffer
 			}
 		} while (!isValid);
 	}
@@ -71,7 +86,10 @@ public class PersonaMenu {
 	private void mostrarMenuOpciones() {
 		System.out.println("----------------------");
 		System.out.println(OPCION_VER_TODO + " para ver todas las personas");
-		// implementar otras opciones
+		System.out.println(OPCION_CREAR + " para crear persona");
+		System.out.println(OPCION_EDITAR + " para editar persona");
+		System.out.println(OPCION_ELIMINAR + " para eliminar persona");
+		System.out.println(OPCION_BUSCAR + " para buscar persona");
 		System.out.println(OPCION_REGRESAR_MOTOR_PERSISTENCIA + " para regresar");
 	}
 
@@ -88,8 +106,8 @@ public class PersonaMenu {
 			return keyboard.nextInt();
 		} catch (InputMismatchException e) {
 			log.warn("Solo se permiten números.");
-			return leerOpcion(keyboard);
+			keyboard.nextLine(); // limpiar buffer
+			return -1; // opción inválida
 		}
 	}
-
 }

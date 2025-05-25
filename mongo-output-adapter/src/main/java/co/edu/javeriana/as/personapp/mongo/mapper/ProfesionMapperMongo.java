@@ -45,6 +45,24 @@ public class ProfesionMapperMongo {
 		profession.setStudies(validateStudies(profesionDocument.getEstudios()));
 		return profession;
 	}
+	public Profession fromAdapterToDomainBasic(ProfesionDocument profesionDocument) {
+		Profession profession = new Profession();
+
+		if (profesionDocument == null || profesionDocument.getId() == null) {
+			// fallback seguro
+			profession.setIdentification(0);
+			profession.setName("");
+			profession.setDescription("");
+			return profession;
+		}
+
+		profession.setIdentification(profesionDocument.getId());
+		profession.setName(profesionDocument.getNom() != null ? profesionDocument.getNom() : "");
+		profession.setDescription(profesionDocument.getDes() != null ? validateDescription(profesionDocument.getDes()) : "");
+		
+		return profession;
+	}
+
 
 	private String validateDescription(String des) {
 		return des != null ? des : "";
@@ -52,7 +70,7 @@ public class ProfesionMapperMongo {
 
 	private List<Study> validateStudies(List<EstudiosDocument> estudiosDocument) {
 		return estudiosDocument != null && !estudiosDocument.isEmpty() ? estudiosDocument.stream()
-				.map(estudio -> estudiosMapperMongo.fromAdapterToDomain(estudio)).collect(Collectors.toList())
+				.map(estudio -> estudiosMapperMongo.fromAdapterToDomainBasic(estudio)).collect(Collectors.toList())
 				: new ArrayList<Study>();
 	}
 }

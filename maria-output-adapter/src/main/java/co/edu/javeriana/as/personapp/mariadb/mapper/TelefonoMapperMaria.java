@@ -12,30 +12,30 @@ import lombok.NonNull;
 @Mapper
 public class TelefonoMapperMaria {
 
-	@Autowired
-	private PersonaMapperMaria personaMapperMaria;
+    @Autowired
+    private PersonaMapperMaria personaMapperMaria;
 
-	public TelefonoEntity fromDomainToAdapter(Phone phone) {
-		TelefonoEntity telefonoEntity = new TelefonoEntity();
-		telefonoEntity.setNum(phone.getNumber());
-		telefonoEntity.setOper(phone.getCompany());
-		telefonoEntity.setDuenio(validateDuenio(phone.getOwner()));
-		return telefonoEntity;
-	}
+    public TelefonoEntity fromDomainToAdapter(Phone phone) {
+        TelefonoEntity telefonoEntity = new TelefonoEntity();
+        telefonoEntity.setNum(phone.getNumber());
+        telefonoEntity.setOper(phone.getCompany());
+        telefonoEntity.setDuenio(validateDuenio(phone.getOwner()));
+        return telefonoEntity;
+    }
 
-	private PersonaEntity validateDuenio(@NonNull Person owner) {
-		return owner != null ? personaMapperMaria.fromDomainToAdapter(owner) : new PersonaEntity();
-	}
+    private PersonaEntity validateDuenio(@NonNull Person owner) {
+        return owner != null ? personaMapperMaria.fromDomainToAdapter(owner) : new PersonaEntity();
+    }
 
-	public Phone fromAdapterToDomain(TelefonoEntity telefonoEntity) {
-		Phone phone = new Phone();
-		phone.setNumber(telefonoEntity.getNum());
-		phone.setCompany(telefonoEntity.getOper());
-		phone.setOwner(validateOwner(telefonoEntity.getDuenio()));
-		return phone;
-	}
+    public Phone fromAdapterToDomain(TelefonoEntity telefonoEntity) {
+        Phone phone = new Phone();
+        phone.setNumber(telefonoEntity.getNum());
+        phone.setCompany(telefonoEntity.getOper());
+        phone.setOwner(validateOwner(telefonoEntity.getDuenio()));
+        return phone;
+    }
 
-	private @NonNull Person validateOwner(PersonaEntity duenio) {
-		return duenio != null ? personaMapperMaria.fromAdapterToDomain(duenio) : new Person();
-	}
+    private @NonNull Person validateOwner(PersonaEntity duenio) {
+        return duenio != null ? personaMapperMaria.fromAdapterToDomainBasic(duenio) : new Person();
+    }
 }
